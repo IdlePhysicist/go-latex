@@ -13,12 +13,22 @@ import (
   ref "github.com/idlephysicist/go-latex/reference"
 )
 
-var files []string
+var (
+  files []string
+  commit string
+  version bool
+)
 
 func main() {
   // Read file arg
+  flag.BoolVar(&version, "v", false, "Print version and exit")
   flag.Parse()
   fileArg := flag.Arg(0)
+
+  if version {
+    fmt.Printf("go-latex version / build commit: %s\n", commit)
+    os.Exit(0)
+  }
 
   // Determine the arg we got i.e. a single .go file or a .
   if fileArg == `.` {
