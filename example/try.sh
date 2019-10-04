@@ -1,4 +1,11 @@
 #!/bin/sh
+
+if [[ ${PWD##*/} != "example" ]]; then
+  cd example
+fi
+
 cat test-file.go
-~/Documents/src/go/go-latex/build/go-latex .
+
+../build/go-latex .
+
 cat test-file.go

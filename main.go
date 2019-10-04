@@ -56,7 +56,7 @@ func main() {
       continue
     }
     
-    fmt.Println(`Processing file: `, file)
+    fmt.Println(`Processing file:`, file)
     updatedText := process(string(contents))
     
     err = ioutil.WriteFile(file, []byte(updatedText), 0644)
@@ -97,7 +97,7 @@ func findFiles(root string) error {
       }
 
       if filepath.Ext(path) == `.go` {
-        fmt.Println(`Found `, path)
+        fmt.Println(`Found`, path)
         files = append(files, path)
       }
       return nil
