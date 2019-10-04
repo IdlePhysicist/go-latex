@@ -1,6 +1,6 @@
-package main
+package reference
 
-const REF = map[string][string]{
+var Chart = map[string]string{
   `\alpha`  : `α`,
   `\Alpha`  : `Α`,
   `\beta`   : `β`,

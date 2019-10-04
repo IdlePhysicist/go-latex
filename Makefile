@@ -1,13 +1,13 @@
-build="build"
+build=build
 
 platform="darwin"
 cgo=0
 
-default: clean build clean
+default: clean build
 
 clean:
-	rm -f build/*
-	touch .keep
+	rm -f $(build)/*
+	touch $(build)/.keep
 
 build:
 	env CGO_ENABLED=$(cgo) GOOS=$(platform) go build -o $(build)/go-latex main.go
