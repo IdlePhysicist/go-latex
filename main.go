@@ -16,17 +16,18 @@ import (
 var (
   files []string
   commit string
-  version bool
+	version string
+  versionFlg bool
 )
 
 func main() {
   // Read file arg
-  flag.BoolVar(&version, "v", false, "Print version and exit")
+  flag.BoolVar(&versionFlg, "v", false, "Print version and exit")
   flag.Parse()
   fileArg := flag.Arg(0)
 
-  if version {
-    fmt.Printf("go-latex version / build commit: %s\n", commit)
+  if versionFlg {
+		fmt.Printf("go-latex version: %s\nbuild commit: %s\n", version, commit)
     os.Exit(0)
   }
 
