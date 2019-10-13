@@ -38,7 +38,7 @@ func main() {
     }
 
   } else {
-    
+
     if fileExists(fileArg) && filepath.Ext(fileArg) == `.go` {
       files = append(files, fileArg)
 
@@ -55,10 +55,10 @@ func main() {
       log.Println("An Error occured reading %s", err)
       continue
     }
-    
+
     fmt.Println(`Processing file:`, file)
     updatedText := process(string(contents))
-    
+
     err = ioutil.WriteFile(file, []byte(updatedText), 0644)
     if err != nil {
       log.Fatalln(err)
@@ -69,7 +69,7 @@ func main() {
 // process takes the text from the source file, regexes it for LaTeX commands
 // 
 func process(text string) string {
-  regex := regexp.MustCompile(`\\\w+`)
+  regex := regexp.MustCompile(`\\[A-Za-z][a-z]*[a-z]`)
   var unicodedText []string
 
   for _, line := range strings.Split(text, `\n`) {
@@ -79,7 +79,7 @@ func process(text string) string {
       latexCmd := text[loc[0]:loc[1]]
       unicodeString := ref.Chart[latexCmd]
 
-      line = strings.Replace(line, latexCmd, unicodeString, -1)      
+      line = strings.Replace(line, latexCmd, unicodeString, -1)
     }
 
     unicodedText = append(unicodedText, line)
