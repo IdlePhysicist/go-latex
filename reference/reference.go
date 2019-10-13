@@ -50,4 +50,5 @@ var Chart = map[string]string{
   `\omega`  : `ω`,
   `\Omega`  : `Ω`,
   `\hbar`   : `ℏ`,
+  `\nabla`  : `∇`,
 }
