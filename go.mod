@@ -1,3 +1,3 @@
-module github.com/IdlePhysicist/go-latex
+module github.com/idlephysicist/go-latex
 
 go 1.13
