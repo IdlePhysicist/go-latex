@@ -1,114 +1,117 @@
 package main
 
 import (
-  "flag"
-  "fmt"
-  "io/ioutil"
-  "log"
-  "os"
-  "path/filepath"
-  "regexp"
-  "strings"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
 
-  ref "github.com/idlephysicist/go-latex/reference"
+	flag "github.com/spf13/pflag"
+
+	ref "github.com/idlephysicist/go-latex/reference"
 )
 
 var (
-  files []string
-  commit string
-	version string
-  versionFlg bool
+	commit, version string
+
+	files      []string
+	ext        string
+	versionFlg bool
 )
 
 func main() {
-  // Read file arg
-  flag.BoolVar(&versionFlg, "v", false, "Print version and exit")
-  flag.Parse()
-  fileArg := flag.Arg(0)
+	// Read file arg
+	flag.BoolVar(&versionFlg, "v", false, "Print version and exit")
+	flag.StringVarP(&ext, "ext", "e", "go", "File type to process")
+	flag.Parse()
+	fileArg := flag.Arg(0)
 
-  if versionFlg {
+	if versionFlg {
 		fmt.Printf("go-latex version: %s\nbuild commit: %s\n", version, commit)
-    os.Exit(0)
-  }
+		os.Exit(0)
+	}
 
-  // Determine the arg we got i.e. a single .go file or a .
-  if fileArg == `.` {
-    err := findFiles(fileArg)
-    if err != nil {
-      log.Println(err)
-    }
+	// Determine the arg we got i.e. a single .go file or a .
+	if fileArg == `.` {
+		err := findFiles(fileArg)
+		if err != nil {
+			log.Println(err)
+		}
 
-  } else {
+	} else {
 
-    if fileExists(fileArg) && filepath.Ext(fileArg) == `.go` {
-      files = append(files, fileArg)
+		if fileExists(fileArg) && filepath.Ext(fileArg) == `.` + ext {
+			files = append(files, fileArg)
 
-    } else {
-      log.Println("Error invalid file name")
-      os.Exit(1)
-    }
-  }
+		} else {
+			log.Println("Error invalid file name")
+			os.Exit(1)
+		}
+	}
 
-  // Iterate through the files that we've found
-  for _, file := range files {
-    contents, err := ioutil.ReadFile(file)
-    if err != nil {
-      log.Println("An Error occured reading %s", err)
-      continue
-    }
+	// Iterate through the files that we've found
+	for _, file := range files {
+		contents, err := ioutil.ReadFile(file)
+		if err != nil {
+			log.Println("An Error occured reading %s", err)
+			continue
+		}
 
-    fmt.Println(`Processing file:`, file)
-    updatedText := process(string(contents))
+		fmt.Println(`Processing file:`, file)
+		updatedText := process(string(contents))
 
-    err = ioutil.WriteFile(file, []byte(updatedText), 0644)
-    if err != nil {
-      log.Fatalln(err)
-    }
-  }
+		err = ioutil.WriteFile(file, []byte(updatedText), 0644)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
 }
 
 // process takes the text from the source file, regexes it for LaTeX commands
 // 
 func process(text string) string {
-  regex := regexp.MustCompile(`\\[A-Za-z][a-z]*[a-z]`)
-  var unicodedText []string
+	regex := regexp.MustCompile(`\\[A-Za-z][a-z]*[a-z]`)
+	var unicodedText []string
 
-  for _, line := range strings.Split(text, `\n`) {
-    allIndices := regex.FindAllStringIndex(line, -1)
+	for _, line := range strings.Split(text, `\n`) {
+		allIndices := regex.FindAllStringIndex(line, -1)
 
-    for _, loc := range allIndices {
-      latexCmd := text[loc[0]:loc[1]]
-      unicodeString := ref.Chart[latexCmd]
+		for _, loc := range allIndices {
+			latexCmd := text[loc[0]:loc[1]]
+			unicodeString := ref.Chart[latexCmd]
 
-      line = strings.Replace(line, latexCmd, unicodeString, -1)
-    }
+			line = strings.Replace(line, latexCmd, unicodeString, -1)
+		}
 
-    unicodedText = append(unicodedText, line)
-  }
+		unicodedText = append(unicodedText, line)
+	}
 
-  return strings.Join(unicodedText, `\n`)
+	return strings.Join(unicodedText, `\n`)
 }
 
 
 func findFiles(root string) error {
-  return filepath.Walk(root,
-    func(path string, info os.FileInfo, err error) error {
-      if err != nil {
-          return err
-      }
+	return filepath.Walk(root,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+					return err
+			}
 
-      if filepath.Ext(path) == `.go` {
-        fmt.Println(`Found`, path)
-        files = append(files, path)
-      }
-      return nil
-  })
+			if filepath.Ext(path) == `.go` {
+				fmt.Println(`Found`, path)
+				files = append(files, path)
+			}
+			return nil
+	})
 }
 
 func fileExists(name string) bool {
-  info, err := os.Stat(name)
-  if os.IsNotExist(err) {
-      return false
-  }
-  return !info.IsDir()
+	info, err := os.Stat(name)
+	if os.IsNotExist(err) {
+			return false
+	}
+	return !info.IsDir()
 }

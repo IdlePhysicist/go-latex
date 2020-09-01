@@ -16,7 +16,7 @@ A variable can contain LaTeX macros provided the immediate following character i
 - A space
 - Or a Capital letter
 
-The only kind of character that cannot follow a macro is a lowercase letter! While this is an annoyance to some it can promote the writing of more readable code by using `_` and calitalisations to break up variable names containing several words.
+The only kind of character that cannot follow a macro is a lowercase letter! While this is an annoyance to some it can promote the writing of more readable code by using `_` and capitalisations to break up variable names containing several words.
 
 **Note on string literals**
 
