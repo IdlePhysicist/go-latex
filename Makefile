@@ -5,13 +5,13 @@ cgo=0
 version?="0.0.0"
 ldflags="-X main.commit=`git rev-list -1 HEAD | head -c 8` -X main.version=$(version)"
 
-default: clean build
+default: build
 
 clean:
 	rm -f $(build)/*
 	touch $(build)/.keep
 
-build:
+build: clean
 	env CGO_ENABLED=$(cgo) GOOS=$(platform) go build -ldflags $(ldflags) -o $(build)/go-latex main.go
 
 release: clean
